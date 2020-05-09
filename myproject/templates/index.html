@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Css classes for layout and styling -->
+    <style>
+        .container {
+            max-width: 700px;
+            width: 100%;
+            display: flex;
+            margin-top: 100px;
+            flex-direction: column;
+        }
+    </style>
+
+    <!--  Bootstrap css -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div>
+            <h2>Invoice Data Form</h2>
+        </div>
+
+        <div>
+            <form>
+
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" data-date-format="yyy/mm/dd/H/M/S" class="form-control" aria-describedby="date" placeholder="Enter date">
+                </div>
+
+                <div class="form-group">
+                    <label for="due-date">Due Date</label>
+                    <input type="date" id="due-date" class="form-control" aria-describedby="dueDate"
+                        placeholder="Enter due date">
+                </div>
+
+                <div class="form-group">
+                    <label for="line-amount-types">Line Amount Types</label>
+                    <select class="form-control" id="line-amount-types">
+                        <option>Exclusive</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" aria-describedby="description"
+                        placeholder="Enter description">
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" aria-describedby="quantity"
+                        placeholder="Enter quantity">
+                </div>
+
+                <div class="form-group">
+                    <label for="unit-amount">Unit amount</label>
+                    <input type="number" class="form-control" id="unit-amount" aria-describedby="quantity"
+                        placeholder="Enter unit amount">
+                </div>
+
+                <div class="form-group">
+                    <label for="account-rate">Account Rate</label>
+                    <input type="number" class="form-control" id="account-rate" aria-describedby="emailHelp"
+                        placeholder="Enter account rate">
+                </div>
+
+                <div class="form-group">
+                    <label for="discount-rate">Discount Rate</label>
+                    <input type="number" class="form-control" id="discount-rate" aria-describedby="discount-rate"
+                        placeholder="Enter discount rate">
+                </div>
+
+                <button type="button" class="btn btn-primary" onClick="onSubmit()">Submit Data</button>
+            </form>
+        </div>
+
+    </div>
+
+
+
+    <!-- Bootstrap Javascript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+
+    <!-- Custom javascript used to get form details and submit data -->
+    <script>
+        const submitData = (formData) => {
+            // Return a new promise.
+            return new Promise(function (resolve, reject) {
+                // Do the usual XHR stuff
+                var req = new XMLHttpRequest();
+                req.open('POST', '/myapp/create_invoice');
+                req.setRequestHeader("Content-type", "application/json");
+
+                req.onload = function () {
+                    // This is called even on 404 etc
+                    // so check the status
+                    if (req.status == 200) {
+                        // Resolve the promise with the response text
+                        resolve(req.response);
+                    } else {
+                        // Otherwise reject with the status text
+                        // which will hopefully be a meaningful error
+                        reject(Error(req.statusText));
+                    }
+                };
+
+                // Handle network errors
+                req.onerror = function () {
+                    reject(Error("Network Error"));
+                };
+
+                // Make the request
+                var params = 'orem=ipsum&name=binny';
+                req.send(JSON.stringify(formData));
+            });
+        }
+
+        const onSubmit = () => {
+
+            const formData = {
+                Type: 'ACCREC',
+                Contact: {
+                    "ContactID": "eaa28f49-6028-4b6e-bb12-d8f6278073fc"
+                },
+                Date: $('#date').val(),
+                DueDate: $('#due-date').val(),
+                LineAmountTypes: $('#line-amount-types').val(),
+                LineItems: [
+                    {
+                        Description: $('#description').val(),
+                        Quantity: $('#quantity').val(),
+                        UnitAmount: $('#unit-amount').val(),
+                        AccountRate: $('#account-rate').val(),
+                        DiscountRate: $('#discount-rate').val(),
+                    }
+                ]
+            }
+            submitData(formData);
+            console.log(formData);
+        };
+    </script>
+</body>
+
+</html>
